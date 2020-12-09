@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Patient Data Form</title>
+               
+    </head>
+    
+    <style>
+        /*body {
+            background-image: url("unnamed.jpg");
+            background-color: #cccccc;
+            background-repeat: no-repeat;
+            background-attachment: fixed;  
+            background-size: cover;
+        }*/
+        h1 {
+            color: #726EFF;
+            text-align: center;
+            margin-top: 50px;
+            font: normal normal normal 46px/56px Segoe UI;
+            letter-spacing: 0;
+        }
+        h3{
+            text-align: left;
+            margin-left: 420px;
+            font: normal normal normal 24px/32px Segoe UI;
+            letter-spacing: 0px;
+            color: #000100;
+            opacity: 1;
+        }
+        p{
+            color: var(--unnamed-color-000000);
+            text-align: left;
+            font: normal normal normal 16px/22px Segoe UI;
+            letter-spacing: 0px;
+            color: #000000;
+            opacity: 1;
+
+        }
+        input{
+            color: var(--unnamed-color-000000);
+            text-align: left;
+            font: normal normal normal 14px/20px Segoe UI;
+            letter-spacing: 0px;
+            color: #000000;
+            opacity: 1;
+            margin-bottom: 5px;
+        }
+        
+        div {
+            padding-top: 0px;
+            padding-bottom: 10px;
+            
+            }
+    </style>
+    <body>
+        <h1>EndoFYP</h1>
+        <h3>New Recording</h3>
+        <form method="post" action="/patient-data">
+            <div style="width: 250px; float:left; height:100px; margin-left: 420px;">
+                <p>Personal Information</p>
+                <label for="fname">First name:</label>
+                <input type="text" id="fname" name="fname"  required><br>
+                <label for="lname">Last name:</label>
+                <input type="text" id="lname" name="lname"  required><br>
+                <label for="age">Age :</label>
+                <input type="number" id="age" name="age"  min="1" max="150" step="1" required><br>
+                <label for="height">Height:</label>
+                <input type="number" id="height" name="height" placeholder="(cm)" min="1" max="300" step="0.01" required><br>
+                <label for="weight">Weight:</label>
+                <input type="number" id="weight" name="weight" placeholder="(kg)" min="1" max="200" step="0.01" required><br>
+                <p>Gender</p>
+                <input type="radio" id="male" name="gender" value="male">
+                <label for="male">Male</label><br>
+                <input type="radio" id="female" name="gender" value="female">
+                <label for="female">Female</label><br>
+                <input type="radio" id="other" name="gender" value="other">
+                <label for="other">Other</label><br>
+                <p>Contact number</p>
+                <input type="tel" id="phone" name="phone" placeholder="Phone number" required>
+            </div>
+            <div style="width: 100px; float:left; height:100px; margin-left: 100px;">
+                <p>Condition</p>
+                <input type="radio" id="healthy" name="condition" value="healthy" required>
+                <label for="healthy">Healthy</label><br>
+                <input type="radio" id="diab" name="condition" value="diabetic">
+                <label for="diab">Diabetic</label><br>
+                <input type="radio" id="cvd" name="condition" value="cvd">
+                <label for="cvd">CVD</label><br>
+                <p>Comment</p>
+                <textarea id="comment" name="comment" rows="10" cols="35" placeholder="Comments"></textarea><br>
+                <input type = "submit" value = "Submit" />
+            </div>
+                     
+            
+        </form>
+    </body>
+</html>
