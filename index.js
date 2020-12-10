@@ -58,10 +58,6 @@ db.once("open", () => {
 
   changeStream.on("change", (change) => {
     console.log(change);
-    if(change.operationType==="insert"){
-      socket.emit("server",change.fullDocument);
-      //console.log(change.fullDocument);
-    }
     if (change.operationType === "update") {
       socket.emit("server", change.updateDescription);
       console.log(change.updateDescription);
@@ -82,10 +78,23 @@ app.get("/results", function (req, res) {
   res.sendFile(__dirname + "/results.html");
 });
 
+app.get("/printresults", function (req, res) {
+  res.sendFile(__dirname + "/view_plots.html");
+});
+
+app.get("/patientslist", function (req, res) {
+  res.sendFile(__dirname + "/table_page.html");
+});
+
+app.get("/Recording", function (req, res) {
+  res.sendFile(__dirname + "/existing_recording.html");
+});
+
 app.post('/patient-data', function (req, res) {
   console.log(req.body)
   res.redirect('/')
   var myData = new User(req.body);
+    //console.log(myData.fname+myData);
     myData.save()
 })
 

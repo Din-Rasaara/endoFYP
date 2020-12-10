@@ -3,7 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Result</title>
+	<title>Result</title>
+	<script type="text/javascript" language="javascript">
+		function redirect()
+		{
+			window.location.href="http://localhost:3000/printresults/";
+		}
+	</script>
 </head>
 <style id="applicationStylesheet" type="text/css">
 	
@@ -1894,6 +1900,16 @@
 		font-size: 14px;
 		color: rgba(0,0,0,1);
 	}
+	#print{
+		left: 900px;
+		top: 950px;
+		position: absolute;
+		font-family: Segoe UI;
+		font-style: normal;
+		font-weight: lighter;
+		font-size: 15px;
+		color: rgba(0,0,0,1);
+	}
 </style>
 <body>
 
@@ -2273,7 +2289,10 @@
             </div>
         </div>
         
-    </div>
+	</div>
+	<div>
+		<button id="print" onclick="redirect();">View Results</button>
+	</div>
     
     
 </body>
