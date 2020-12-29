@@ -70,7 +70,7 @@ app.get('/form', function (req, res) {
 })
 
 app.get("/", function (req, res) {
-  res.sendFile(__dirname + "/modified_plots_page.html");
+  res.sendFile(__dirname + "/test.html");
 });
 
 app.get("/results", function (req, res) {

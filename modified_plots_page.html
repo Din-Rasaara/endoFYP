@@ -186,12 +186,14 @@
         var socket = io('http://localhost:3000');//socket connection
         var dps1=[],dps2=[],dps3=[],dps4=[];//dataPoint arrays
         var dps=[dps1,dps2,dps3,dps4];
-        var charts=[chart1,chart2,chart3,chart4];
+        //var charts=[chart1,chart2,chart3,chart4];
+        //var resetFlags=[resetFlag1,resetFlag2,resetFlag3,resetFlag4];
         var updateInterval=500; //speed of update half a second
         var cnt=0;
-
+        var resetFlag=false;
+        var chart1=0;chart2=0;chart3=0;chart4=0;
         //variables for fingertip pressure
-        var X={},Y={};
+        var axisX1={},axisY1={};
         var resetFlag1=false;
         //variables for fingertip temperature
         var axisX2={},axisY2={};
@@ -203,56 +205,51 @@
         var axisX4={},axisY4={};
         var resetFlag4=false;
         
-        //function for chartOptions
-        var chartOptions= {            
-            zoomEnabled:true,
-            zoomType: "xy",
-            exportEnabled: true,
-            axisX: {
-                X,
-                stripLines:[{
-                    startValue: 100,
-                    endValue: 200,
-                    color: "#d8d8d8"
-                }]
-            },
-            axisY: Y,
-            backgroundColor: "#F5DEB3",
-            data: [{
-                type: "line",
-                dataPoint: dps1
-            }]
-        };
+        renderMyChart(chart1,chartContainer1, dps1,axisX1,axisY1);
+        renderMyChart(chart2,chartContainer2, dps2,axisX2,axisY2);
+        renderMyChart(chart3,chartContainer3, dps3,axisX3,axisY3);
+        renderMyChart(chart4,chartContainer4, dps4,axisX4,axisY4);
 
-        //create chart for fingertip pressure
-		var chart1=new CanvasJS.Chart("chartContainer1",chartOptions);
-        chart1.render();
-        //create chart for fingertip temperature
-		var chart2=new CanvasJS.Chart("chartContainer2",chartOptions);
-        chart2.render();
-        //create chart for SPO2
-		var chart3=new CanvasJS.Chart("chartContainer3",chartOptions);
-        chart3.render();
-        //create chart for Bioimpedance
-		var chart4=new CanvasJS.Chart("chartContainer4",chartOptions);
-        chart4.render();
+        function renderMyChart(myChart,theDIVid, myData,myaxisX,myaxisY) {
+            var myChart = new CanvasJS.Chart(theDIVid, {
+                zoomEnabled: true,
+                zoomType: "xy",
+                exportEnabled: true,
+                axisX: {
+                    myaxisX,
+                    stripLines:[{
+                        startValue: 100,
+                        endValue: 200,
+                        color: "#d8d8d8"
+                    }]
+                },
+                axisY: myaxisY,
+                data: [
+                    {
+                        type: "column",
+                        dataPoints: myData
+                    }
+                ]
+            });
+            myChart.render();
+        }
 
          //define updateChart
-         var updateChart = function (upd1, count) {
+        var updateChart = function (myChart,dps,upd, count) {
             count = count || 1;
             for (var j = 0; j < count; j++) {
-                dps1.push({
-                     x: upd1.time,
-                     y: parseFloat(upd1.value)
+                dps.push({
+                     x: upd.time,
+                     y: parseFloat(upd.value)
                 });
             }
-			if(resetFlag1) {
-            	chart1.options.axisX.viewportMinimum = null;
-				chart1.options.axisX.viewportMaximum = null;
-				chart1.options.axisY.viewportMinimum = null;
-				chart1.options.axisY.viewportMaximum = null;
+			if(resetFlag) {
+            	myChart.options.axisX.viewportMinimum = null;
+				myChart.options.axisX.viewportMaximum = null;
+				myChart.options.axisY.viewportMinimum = null;
+				myChart.options.axisY.viewportMaximum = null;
 			}
-			chart1.render();
+			myChart.render();
 		};
 
         //define updateAxisRange: function to update the axis X range on zooming
@@ -275,7 +272,7 @@
 					//console.log(x);
 					value: message.updatedFields[key].value
                 };
-                updateChart(upd1);
+                updateChart(chart1,dps1,upd1);
                 }
                 else if(key.substring(0,4)=="Temp"){
 					var upd2 = {
@@ -284,7 +281,7 @@
 					value: message.updatedFields[key].value
 					
                 };
-                updateChart(upd2,chart2,dps2,resetFlag2)
+                updateChart(chart2,dps2,upd2)
                 }
                 
 			}
