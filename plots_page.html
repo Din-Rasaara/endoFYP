@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="http://canvasjs.com/assets/script/canvasjs.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-	<script src="/socket.io/socket.io.js"></script>
+	<script src="http://localhost:3000/socket.io/socket.io.js"></script>
 	<script type="text/javascript" language="javascript">
 		function redirect()
 		{
@@ -157,7 +157,8 @@ input:checked + .slider:before {
         <div>
 			<p>Dinithi Hemakumara <span id="ct"></span><button id="stop" onclick="redirect();">Stop Occlusion</button></p>
 			
-        </div>
+		</div>
+		
         <div class="chartBlock">
             <h6>Fingertip Pressure</h6>
             <div>
@@ -209,7 +210,6 @@ input:checked + .slider:before {
         var updateInterval=500;//speed of update half a second
         var dataLength=100;//number of datapoints visible at a time
         var cnt=0;
-
         //chart1_Fingertip Pressure
         //variables
         var axisX1={},axisY1={};
@@ -227,15 +227,15 @@ input:checked + .slider:before {
 			zoomType: "xy",
 			rangeChanged: function(e1){
 				if(e1.trigger === "zoom"){
-					axisXMax1 = e1.axisX[0].viewportMaximum + 1;
-					axisXMin1 = e1.axisX[0].viewportMinimum + 1;
-					axisYMax1 = e1.axisY[0].viewportMaximum + 1;
-					axisYMin1 = e1.axisY[0].viewportMinimum + 1;
+					axisXMax1 = e1.axisX[0].viewportMaximum ;
+					axisXMin1 = e1.axisX[0].viewportMinimum ;
+					axisYMax1 = e1.axisY[0].viewportMaximum ;
+					axisYMin1 = e1.axisY[0].viewportMinimum ;
 					resetFlag1 = false;
 					if (updateRange1>0) clearInterval(updateRange1);
-					updateRange1 = setInterval(function() {
+					//updateRange1 = setInterval(function() {
 						updateAxisRange1();//defined below
-					}, updateInterval);
+					//}, updateInterval);
                 } 
                 else if  (e1.trigger == "reset"){
 					resetFlag1=true;
@@ -271,8 +271,10 @@ input:checked + .slider:before {
                 dps1.push({
                      x: upd1.time,
                      y: parseFloat(upd1.value)
+			
                 });
-            }
+			}
+			updateAxisRange1();
 			if(resetFlag1) {
             	chart1.options.axisX.viewportMinimum = null;
 				chart1.options.axisX.viewportMaximum = null;

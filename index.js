@@ -60,8 +60,7 @@ db.once("open", () => {
     console.log(change);
     if (change.operationType === "update") {
       socket.emit("server", change.updateDescription);
-      console.log(change.updateDescription);
-      
+      console.log(change.updateDescription);  
     }
   });
 });
@@ -71,7 +70,7 @@ app.get('/form', function (req, res) {
 })
 
 app.get("/", function (req, res) {
-  res.sendFile(__dirname + "/plots_page.html");
+  res.sendFile(__dirname + "/modified_plots_page.html");
 });
 
 app.get("/results", function (req, res) {
@@ -80,6 +79,30 @@ app.get("/results", function (req, res) {
 
 app.get("/printresults", function (req, res) {
   res.sendFile(__dirname + "/view_plots.html");
+  const MongoClient = require('mongodb').MongoClient;
+  const url = 'mongodb://localhost:27017/testdb';
+  const dbName = 'testdb';
+  socket.on("connection", (client) => {
+    console.log("user connected");
+    socket.on("disconnect", () => {
+      console.log("user disconnected");
+    });
+  });
+  MongoClient.connect(url).then(client => {
+      const db = client.db(dbName);
+      const col = db.collection('testc');
+      col.find({}).toArray().then(docs => {
+      // logs message upon finding collection
+      console.log(docs[0]);
+      socket.emit("server", docs[0]);
+      console.log('message emitted');
+      });
+      client.close(() => console.log('connection closed'));
+      }).catch(err => {
+      console.log('error finding collection', err);
+      }).catch(err => {
+      console.log('error connecting to mongodb', err);
+      });
 });
 
 app.get("/patientslist", function (req, res) {
@@ -94,7 +117,5 @@ app.post('/patient-data', function (req, res) {
   console.log(req.body)
   res.redirect('/')
   var myData = new User(req.body);
-    //console.log(myData.fname+myData);
     myData.save()
 })
-

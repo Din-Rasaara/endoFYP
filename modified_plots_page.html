@@ -1,0 +1,294 @@
+<!--code for displaying the realtime plots-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Realtime Plots</title>
+    <link rel="stylesheet" href="style.css"> <!--css style sheet-->
+    <script src="http://canvasjs.com/assets/script/canvasjs.min.js"></script><!--source for canvas js-->
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script><!--source for jquery-->
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script><!--source for sockets-->
+    <script type="text/javascript" language="javascript"> 
+		function redirect() //function to redirect to the next page
+		{
+			window.location.href="http://localhost:3000/results/"; 
+        }
+        function display_c() //function to refresh time
+        {
+            var refresh=1000; // Refresh rate in milli seconds
+            mytime=setTimeout('display_ct()',refresh)
+        }
+        function display_ct() //function to get and display realtime date and time values
+        {
+            var x = new Date()
+            var x1=x.getMonth() + 1+ "/" + x.getDate() + "/" + x.getYear(); 
+            x1 = x1 + " - " +  x.getHours( )+ ":" +  x.getMinutes() + ":" +  x.getSeconds();
+            document.getElementById('ct').innerHTML = x1;
+            display_c();
+        }
+    </script>
+    <style>
+        /*top bar that displays name, date and time and stop occlusion button*/
+        .topbar{
+            height: 5%;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+        /*verticle line that divides the page*/
+        .vl{
+            height: 87%;
+            top: 10%;
+            border-left: 2px solid gray;
+            position: absolute;
+            left: 49%;
+        }
+        /*horizontal line that divides tha page*/
+        .hr{
+            border-top: 2px solid gray;
+            margin-top: 1%;
+            margin-bottom: 1%;
+        }
+        /*splitting page into two*/
+        .split{
+            height: 94%;
+            width: 45%;
+            position: fixed;
+            z-index: 1;
+            top: 5%;
+            overflow-x: hidden;
+        }
+        /*left side of the screen*/
+        .left{
+            left: 4%;            
+        }
+        /*right side of the screen*/
+        .right{
+            right: 5%;
+            left: 49%;
+            
+        }
+        /*top of the screen*/
+        #top{
+            height: 48%;
+            top: 0;
+        }
+        /*bottom of the screen*/
+        #bottom{
+            height: 48%;
+            top: 50%;            
+        }
+        /*Chart container for CanvasJS plot*/
+        #chartContainer1,#chartContainer2,#chartContainer3,#chartContainer4{
+            width: 87%; 
+            height: 79%;
+            display: inline-block;
+            margin-top: 1px;
+            margin-left: 7px;
+        }
+        /*check box for filtered signal*/
+        #filtered{
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: smaller;
+        }
+        /*topics*/
+        h6{
+            font-size: 24px;
+            font-family: 'Segoe UI';
+            font-style: normal;
+            font-weight: lighter;
+            color: blueviolet;
+            margin-bottom: 0px;
+            margin-top: 5px;
+        }
+        /*zoom in, zoom out butons*/
+        #zi,#zo {
+            height: 25px;
+            width: 25px;
+            background-color: blue; 
+            border: blue;
+            color:white;
+            text-align: center;
+            text-decoration: solid;
+            font-size: 20px;
+            padding: 2.5px 2.5px;
+            float: right;
+            margin-right: 2%;
+        }
+    </style>
+</head>
+<body onload=display_ct();><!--display realtime date and time-->
+    <!--division of page--> 
+    <!--top of the page that displays date time and stop occlusion button-->
+    <div class="topbar">
+        <span id="ct"></span>
+    </div> 
+    <!--verticle line that splits the line into 2 sections--> 
+    <div class="vl"></div> 
+    <!--left section of the page-->
+    <div class="split left">
+        <div id="top" >
+            <h6>Fingertip Pressure</h6>
+            <div>
+                <button id="zi">+</button><!--zoom in button-->
+                <button id="zo" style="margin-right: 1px;">-</button><!--zoom out button-->
+            </div>
+            <div id="chartContainer1"></div>
+            <br>
+            <input type="checkbox" id="filtered">
+            <label for="filtered"> Show Filtered</label>
+        </div>
+        <!--horizontal line that splits top and bottom plots-->
+        <hr class="hr" />
+        <div id="bottom" >
+            <h6>Fingertip Temperature</h6>
+            <div>
+                <button id="zi">+</button><!--zoom in button-->
+                <button id="zo" style="margin-right: 1px;">-</button><!--zoom out button-->
+            </div>
+            <div id="chartContainer2"></div>
+            <br>
+            <input type="checkbox" id="filtered">
+            <label for="filtered"> Show Filtered</label>
+        </div>
+    </div>
+    <!--right section of the page-->
+    <div class="split right" style="width: 47%;">
+        <div id="top" >
+            <h6 style="margin-left: 2%;">SPO2</h6>
+            <div>
+                <button id="zi" style="margin-right: 1.5%;">+</button><!--zoom in button-->
+                <button id="zo" style="margin-right: 1px;">-</button><!--zoom out button-->
+            </div>
+            <div id="chartContainer3" style="margin-left: 3%; width: 86%;"></div>
+            <br>
+            <input type="checkbox" id="filtered" style="margin-left: 2%;">
+            <label for="filtered"> Show Filtered</label>
+        </div>
+        <!--horizontal line that splits the top and bottom plots-->
+        <hr class="hr"/>
+        <div id="bottom" >
+            <h6 style="margin-left: 2%;">Bioimpedance</h6>
+            <div>
+                <button id="zi" style="margin-right: 1.5%;">+</button><!--zoom in button-->
+                <button id="zo" style="margin-right: 1px;">-</button><!--zoom out button-->
+            </div>
+            <div id="chartContainer4" style="margin-left: 3%;width: 86%;"></div>
+            <br>
+            <input type="checkbox" id="filtered" style="margin-left: 2%;">
+            <label for="filtered"> Show Filtered</label>
+        </div>
+    </div>
+    <script>
+        //defining the variables
+        var socket = io('http://localhost:3000');//socket connection
+        var dps1=[],dps2=[],dps3=[],dps4=[];//dataPoint arrays
+        var dps=[dps1,dps2,dps3,dps4];
+        var charts=[chart1,chart2,chart3,chart4];
+        var updateInterval=500; //speed of update half a second
+        var cnt=0;
+
+        //variables for fingertip pressure
+        var X={},Y={};
+        var resetFlag1=false;
+        //variables for fingertip temperature
+        var axisX2={},axisY2={};
+        var resetFlag2=false;
+        //variables for SPO2
+        var axisX3={}, axisY3={};
+        var resetFlag3=false;
+        //variables for Bioimpedance
+        var axisX4={},axisY4={};
+        var resetFlag4=false;
+        
+        //function for chartOptions
+        var chartOptions= {            
+            zoomEnabled:true,
+            zoomType: "xy",
+            exportEnabled: true,
+            axisX: {
+                X,
+                stripLines:[{
+                    startValue: 100,
+                    endValue: 200,
+                    color: "#d8d8d8"
+                }]
+            },
+            axisY: Y,
+            backgroundColor: "#F5DEB3",
+            data: [{
+                type: "line",
+                dataPoint: dps1
+            }]
+        };
+
+        //create chart for fingertip pressure
+		var chart1=new CanvasJS.Chart("chartContainer1",chartOptions);
+        chart1.render();
+        //create chart for fingertip temperature
+		var chart2=new CanvasJS.Chart("chartContainer2",chartOptions);
+        chart2.render();
+        //create chart for SPO2
+		var chart3=new CanvasJS.Chart("chartContainer3",chartOptions);
+        chart3.render();
+        //create chart for Bioimpedance
+		var chart4=new CanvasJS.Chart("chartContainer4",chartOptions);
+        chart4.render();
+
+         //define updateChart
+         var updateChart = function (upd1, count) {
+            count = count || 1;
+            for (var j = 0; j < count; j++) {
+                dps1.push({
+                     x: upd1.time,
+                     y: parseFloat(upd1.value)
+                });
+            }
+			if(resetFlag1) {
+            	chart1.options.axisX.viewportMinimum = null;
+				chart1.options.axisX.viewportMaximum = null;
+				chart1.options.axisY.viewportMinimum = null;
+				chart1.options.axisY.viewportMaximum = null;
+			}
+			chart1.render();
+		};
+
+        //define updateAxisRange: function to update the axis X range on zooming
+		var updateAxisRange = function (axisXMax, axisXMin,chart){    	   	
+			axisXMax += 1;
+			axisXMin += 1;
+			chart.options.axisX.viewportMaximum = axisXMax;
+			chart.options.axisX.viewportMinimum = axisXMin;
+			chart.render();		
+        };
+
+        // obtaining data from socket io to plot the data
+		socket.on("server",(message)=>{
+			console.log(message);
+			cnt=cnt+1;
+			for (var key of Object.keys(message.updatedFields)) {
+				if (key.substring(0, 4) == "Pres"){
+					var upd1 = {
+					time: cnt, // for time stamps switch to [[message.updatedFields[key].time_stamp]],
+					//console.log(x);
+					value: message.updatedFields[key].value
+                };
+                updateChart(upd1);
+                }
+                else if(key.substring(0,4)=="Temp"){
+					var upd2 = {
+					time: cnt, // for time stamps switch to [[message.updatedFields[key].time_stamp]],
+					//console.log(x);
+					value: message.updatedFields[key].value
+					
+                };
+                updateChart(upd2,chart2,dps2,resetFlag2)
+                }
+                
+			}
+        });
+    </script>
+</body>
+</html>
