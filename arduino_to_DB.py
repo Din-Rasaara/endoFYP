@@ -19,9 +19,9 @@ mongodb_db = 'testdb'
 # Connect to MongoDB
 client = MongoClient(mongodb_host, 27017)
 db = client[mongodb_db]
-collection = db['testc']
+collection = db['DinithiHemakumara']
 
-sessionId = ObjectId("5fe890d41583b821887fa683")
+sessionId = ObjectId("602651f0af32c2db486540ef")
 
 fixed_interval = 0.1
 print(client, collection)

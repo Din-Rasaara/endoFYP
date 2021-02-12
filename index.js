@@ -25,22 +25,6 @@ const db = mongoose.connection;
 
 db.on('error', console.error.bind(console, 'Connection Error:'));
 
-const nameSchema = new mongoose.Schema(
-    {
-        fname: String,
-        lname: String,
-        age: Number,
-        height: Number,
-        weight: Number,
-        gender: String,
-        phone: Number,
-        condition: String,
-        comment: String,
-    },
-    { collection: 'testc' }
-);
-const User = mongoose.model('User', nameSchema);
-
 var io = require('socket.io');
 var server = require('http').createServer(app);
 
@@ -49,7 +33,12 @@ var socket = io(server);
 //To listen to messages
 socket.on('connection', (client) => {
     console.log('user connected');
-    socket.on('disconnect', () => {
+    client.on('message', async (msg) => {
+        openChangeStream(msg);
+        console.log(msg);
+        socket.emit('name', msg);
+    });
+    client.on('disconnect', () => {
         console.log('user disconnected');
     });
 });
@@ -57,17 +46,6 @@ socket.on('connection', (client) => {
 db.once('open', () => {
     server.listen(3000, () => {
         console.log('listening on *:3000');
-    });
-
-    const taskCollection = db.collection('testc');
-    const changeStream = taskCollection.watch();
-
-    changeStream.on('change', (change) => {
-        console.log(change);
-        if (change.operationType === 'update') {
-            socket.emit('server', change.updateDescription);
-            console.log(change.updateDescription);
-        }
     });
 });
 
@@ -126,7 +104,46 @@ app.get('/Recording', function (req, res) {
 
 app.post('/patient-data', function (req, res) {
     console.log(req.body);
-    res.redirect('/plots');
-    var myData = new User(req.body);
-    myData.save();
+    var myData = createNewUser(req.body);
+    myData.save(function (err, results) {
+        console.log(err);
+        let uid = results._id;
+        res.redirect('/plots?id=' + results.fname + results.lname);
+    });
 });
+function createNewUser(data) {
+    const nameSchema = new mongoose.Schema(
+        {
+            fname: String,
+            lname: String,
+            age: Number,
+            height: Number,
+            weight: Number,
+            gender: String,
+            phone: Number,
+            condition: String,
+            comment: String,
+        },
+        { collection: data.fname + data.lname }
+    );
+    const User = mongoose.model('User', nameSchema);
+    return new User(data);
+}
+async function getName(uid) {
+    let document = await User.findById(uid);
+    console.log(document);
+    return document.fname + ' ' + document.lname;
+}
+
+function openChangeStream(collection) {
+    const taskCollection = db.collection(collection);
+    const changeStream = taskCollection.watch();
+
+    changeStream.on('change', (change) => {
+        console.log(change);
+        if (change.operationType === 'update') {
+            socket.emit(collection, change.updateDescription);
+            console.log(change.updateDescription);
+        }
+    });
+}

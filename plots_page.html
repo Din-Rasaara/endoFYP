@@ -34,7 +34,8 @@
 	<div>
 		<div class="vl"></div>
 		<div>
-			<p>Dinithi Hemakumara <span id="ct"></span><button id="stop" onclick="redirect();">Stop Occlusion</button>
+			<p><span id="name"></span><span id="ct"></span><button id="stop" onclick="redirect();">Stop
+					Occlusion</button>
 			</p>
 
 		</div>
@@ -90,8 +91,18 @@
 		</div>
 	</div>
 	<script>
+		const queryString = window.location.search;
+		const urlParams = new URLSearchParams(queryString);
+		const uid = urlParams.get('id')
+		console.log(uid)
 		//defining variables
 		var socket = io('http://localhost:3000');//socket connection
+		socket.send(uid)
+		socket.on("name", (message) => {
+			let name = document.getElementById('name');
+			name.innerHTML = message + " "
+		})
+
 		var dps1 = [], dps2 = [], dps3 = [], dps4 = [];
 		var charts = [chart1, chart2, chart3, chart4];
 		var dps = [dps1, dps2, dps3, dps4];
@@ -529,7 +540,7 @@
 
 
 		// obtaining data from socket io to plot the data
-		socket.on("server", (message) => {
+		socket.on(uid, (message) => {
 			console.log(message);
 
 			cnt = cnt + 1;
