@@ -1,282 +1,170 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plots</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="http://canvasjs.com/assets/script/canvasjs.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Plots</title>
+	<link rel="stylesheet" href="styles.css" type="text/css">
+	<script src="http://canvasjs.com/assets/script/canvasjs.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 	<script src="http://localhost:3000/socket.io/socket.io.js"></script>
 	<script type="text/javascript" language="javascript">
-		function redirect()
-		{
-			window.location.href="http://localhost:3000/results/";
+		function redirect() {
+			window.location.href = "http://localhost:3000/results/";
 		}
 	</script>
 </head>
-<style>
-body{
-    background-color: white;
-}
-h6{
-    font-size: 24px;
-    font-family: 'Segoe UI';
-    font-style: normal;
-    font-weight: lighter;
-    color: blueviolet;
-    margin-bottom: 0px;
-    margin-top: 5px;
-}
-p{
-    font-size: small;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin-left: 75px;
-}
-.chartBlock{
-    width: 40%;
-    height: 400px;
-    float: left;
-    margin-left: 75px;
-}
-#zi1,#zo1,#zi2,#zo2,#zi3,#zo3,#zi4,#zo4 {
-    height: 25px;
-    width: 25px;
-    background-color: blue; /* Green */
-    border: blue;
-    color:white;
-    text-align: center;
-    text-decoration: solid;
-    font-size: 20px;
-    padding: 2.5px 2.5px;
-    float: right;
-    margin-right: 3px;
-}
-.vl {
-  border-left: 2px solid gray;
-  height: 85%;
-  position: absolute;
-  left: 48%;
-  margin-top: 55px;
-  top: 0;
-}
-.canvasjs-chart-toolbar {
-    left: 0 !important;
-    right: auto !important;
-    margin-top: 5px !important;
-    margin-bottom: 50px !important;    
-}
-#stop{
-	height: 25px;
-	width: 115px;
-	background-color: blueviolet;
-	text-align: center;
-	margin-right: 115px;
-	float: right;
-	font-size: 13px;
-	color: white;
-	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 34px;
-}
 
-.switch input { 
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  -webkit-transition: .4s;
-  transition: .4s;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 26px;
-  width: 26px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
-}
-
-input:checked + .slider {
-  background-color: #2196F3;
-}
-
-input:focus + .slider {
-  box-shadow: 0 0 1px #2196F3;
-}
-
-input:checked + .slider:before {
-  -webkit-transform: translateX(26px);
-  -ms-transform: translateX(26px);
-  transform: translateX(26px);
-}
-
-/* Rounded sliders */
-.slider.round {
-  border-radius: 34px;
-}
-
-.slider.round:before {
-  border-radius: 50%;
-}
-
-</style>
 <script>
-    function display_c(){
-    var refresh=1000; // Refresh rate in milli seconds
-    mytime=setTimeout('display_ct()',refresh)
-    }
-    function display_ct() {
-    var x = new Date()
-    var x1=x.getMonth() + 1+ "/" + x.getDate() + "/" + x.getYear(); 
-    x1 = x1 + " - " +  x.getHours( )+ ":" +  x.getMinutes() + ":" +  x.getSeconds();
-    document.getElementById('ct').innerHTML = x1;
-    display_c();
-    }
+	function display_c() {
+		var refresh = 1000; // Refresh rate in milli seconds
+		mytime = setTimeout('display_ct()', refresh)
+	}
+	function display_ct() {
+		var x = new Date()
+		var x1 = x.getMonth() + 1 + "/" + x.getDate() + "/" + x.getYear();
+		x1 = x1 + " - " + x.getHours() + ":" + x.getMinutes() + ":" + x.getSeconds();
+		document.getElementById('ct').innerHTML = x1;
+		display_c();
+	}
 </script>
-<body onload=display_ct();>    
-    <div>
-        <div class="vl"></div>
-        <div>
-			<p>Dinithi Hemakumara <span id="ct"></span><button id="stop" onclick="redirect();">Stop Occlusion</button></p>
-			
+
+<body onload=display_ct();>
+	<div>
+		<div class="vl"></div>
+		<div>
+			<p>Dinithi Hemakumara <span id="ct"></span><button id="stop" onclick="redirect();">Stop Occlusion</button>
+			</p>
+
 		</div>
-		
-        <div class="chartBlock">
-            <h6>Fingertip Pressure</h6>
-            <div>
-                <button id="zi1">+</button>
-                <button id="zo1">-</button>
-            </div>
-            <div id="chartContainer1" style="width: 89%; height: 50%;display: inline-block;margin-top: 0px;"></div><br>
-            <br>
-            <input type="checkbox" id="filtered1">
-            <label for="filtered1" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;font-size: smaller;"> Show Filtered</label><br>
-            <hr style="border-color: gray; width:120%; border-style:solid;margin-top: 15px;">
-            <h6>Fingertip Temperature</h6>
-            <div>
-                <button id="zi2">+</button>
-                <button id="zo2">-</button>
-            </div>
-            <div id="chartContainer2" style="width: 89%; height: 50%;display: inline-block;margin-top: 0px;"></div>
-            <input type="checkbox" id="filtered2">
-            <label for="filtered2" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;font-size: smaller;"> Show Filtered</label>
-        </div> 
-        <div class="chartBlock">
-            <h6>SPO2</h6>
-            <div>
-                <button id="zi3">+</button>
-                <button id="zo3">-</button>
-            </div>
-            <div id="chartContainer3" style="width: 89%; height: 50%;display: inline-block;margin-top: 0px;"></div><br>
-            <br>
-            <input type="checkbox" id="filtered3">
-            <label for="filtered3" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;font-size: smaller;"> Show Filtered</label><br>
-            <hr style="border-color: gray;border-style: solid;margin-top: 15px;">
-            <h6>Bioimpedance</h6>
-            <div>
-                <button id="zi4">+</button>
-                <button id="zo4">-</button>
-            </div>
-            <div id="chartContainer4" style="width: 89%; height: 50%;display: inline-block;margin-top: 0px;"></div>
-            <br>
-            <input type="checkbox" id="filtered4">
-            <label for="filtered4" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;font-size: smaller;"> Show Filtered</label>
-        </div>
-    </div>
-    <script>
-        //defining variables
-        var socket = io('http://localhost:3000');//socket connection
-        var dps1=[],dps2=[],dps3=[],dps4=[];
-        var charts=[chart1,chart2,chart3,chart4];
-        var dps=[dps1,dps2,dps3,dps4];
-        var updateInterval=500;//speed of update half a second
-        var dataLength=100;//number of datapoints visible at a time
-        var cnt=0;
-        //chart1_Fingertip Pressure
-        //variables
-        var axisX1={},axisY1={};
-        var xVal=0, yVal=0, axisXMax1=0,axisXMin1=0,axisYMax1=0,axisYMin1=0;
-        var updateRange1=0;
-        var resetFlag1=false;
-        var button1 = document.getElementById( "zi1" );
-		button1.addEventListener( "click",  zoomin1);
-		var button2 = document.getElementById( "zo1" );
-		button2.addEventListener( "click",  zoomout1);
-        //define chartOptions for pressure
-		var chartOptions1 ={
+
+		<div class="chartBlock">
+			<h6>Fingertip Pressure</h6>
+			<div>
+				<button id="zi1">+</button>
+				<button id="zo1">-</button>
+			</div>
+			<div id="chartContainer1" style="width: 89%; height: 50%;display: inline-block;margin-top: 0px;"></div><br>
+			<br>
+			<input type="checkbox" id="filtered1">
+			<label for="filtered1"
+				style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;font-size: smaller;"> Show
+				Filtered</label><br>
+			<hr style="border-color: gray; width:120%; border-style:solid;margin-top: 15px;">
+			<h6>Fingertip Temperature</h6>
+			<div>
+				<button id="zi2">+</button>
+				<button id="zo2">-</button>
+			</div>
+			<div id="chartContainer2" style="width: 89%; height: 50%;display: inline-block;margin-top: 0px;"></div>
+			<input type="checkbox" id="filtered2">
+			<label for="filtered2"
+				style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;font-size: smaller;"> Show
+				Filtered</label>
+		</div>
+		<div class="chartBlock">
+			<h6>SPO2</h6>
+			<div>
+				<button id="zi3">+</button>
+				<button id="zo3">-</button>
+			</div>
+			<div id="chartContainer3" style="width: 89%; height: 50%;display: inline-block;margin-top: 0px;"></div><br>
+			<br>
+			<input type="checkbox" id="filtered3">
+			<label for="filtered3"
+				style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;font-size: smaller;"> Show
+				Filtered</label><br>
+			<hr style="border-color: gray;border-style: solid;margin-top: 15px;">
+			<h6>Bioimpedance</h6>
+			<div>
+				<button id="zi4">+</button>
+				<button id="zo4">-</button>
+			</div>
+			<div id="chartContainer4" style="width: 89%; height: 50%;display: inline-block;margin-top: 0px;"></div>
+			<br>
+			<input type="checkbox" id="filtered4">
+			<label for="filtered4"
+				style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;font-size: smaller;"> Show
+				Filtered</label>
+		</div>
+	</div>
+	<script>
+		//defining variables
+		var socket = io('http://localhost:3000');//socket connection
+		var dps1 = [], dps2 = [], dps3 = [], dps4 = [];
+		var charts = [chart1, chart2, chart3, chart4];
+		var dps = [dps1, dps2, dps3, dps4];
+		var updateInterval = 500;//speed of update half a second
+		var dataLength = 100;//number of datapoints visible at a time
+		var cnt = 0;
+		//chart1_Fingertip Pressure
+		//variables
+		var axisX1 = {}, axisY1 = {};
+		var xVal = 0, yVal = 0, axisXMax1 = 0, axisXMin1 = 0, axisYMax1 = 0, axisYMin1 = 0;
+		var updateRange1 = 0;
+		var resetFlag1 = false;
+		var button1 = document.getElementById("zi1");
+		button1.addEventListener("click", zoomin1);
+		var button2 = document.getElementById("zo1");
+		button2.addEventListener("click", zoomout1);
+		//define chartOptions for pressure
+		var chartOptions1 = {
 			zoomEnabled: true,
 			exportEnabled: true,
 			zoomType: "xy",
-			rangeChanged: function(e1){
-				if(e1.trigger === "zoom"){
-					axisXMax1 = e1.axisX[0].viewportMaximum ;
-					axisXMin1 = e1.axisX[0].viewportMinimum ;
-					axisYMax1 = e1.axisY[0].viewportMaximum ;
-					axisYMin1 = e1.axisY[0].viewportMinimum ;
+			rangeChanged: function (e1) {
+				if (e1.trigger === "zoom") {
+					axisXMax1 = e1.axisX[0].viewportMaximum;
+					axisXMin1 = e1.axisX[0].viewportMinimum;
+					axisYMax1 = e1.axisY[0].viewportMaximum;
+					axisYMin1 = e1.axisY[0].viewportMinimum;
 					resetFlag1 = false;
-					if (updateRange1>0) clearInterval(updateRange1);
+					if (updateRange1 > 0) clearInterval(updateRange1);
 					//updateRange1 = setInterval(function() {
-						updateAxisRange1();//defined below
+					updateAxisRange1();//defined below
 					//}, updateInterval);
-                } 
-                else if  (e1.trigger == "reset"){
-					resetFlag1=true;
+				}
+				else if (e1.trigger == "reset") {
+					resetFlag1 = true;
 					clearInterval(updateRange1);
-				}				
-            },
+				}
+			},
 			axisX: {
-                axisX1,
-                stripLines: [
-			    {
-                    startValue: 100,
-                    endValue: 250,
-                    color:"#d8d8d8"
-                }
-                ]
-            },
+				axisX1,
+				stripLines: [
+					{
+						startValue: 100,
+						endValue: 250,
+						color: "#d8d8d8"
+					}
+				]
+			},
 			axisY: axisY1,
 			data: [
 				{
-					type:"line",
+					type: "line",
 					dataPoints: dps1,
 				},
 			],
 		};
-        //create chart
-		var chart1=new CanvasJS.Chart("chartContainer1",chartOptions1);
-		chart1.render();      
-		             
-        //define updateChart
-        var updateChart1 = function (upd1, count) {
-            count = count || 1;
-            for (var j = 0; j < count; j++) {
-                dps1.push({
-                     x: upd1.time,
-                     y: parseFloat(upd1.value)
-			
-                });
+		//create chart
+		var chart1 = new CanvasJS.Chart("chartContainer1", chartOptions1);
+		chart1.render();
+
+		//define updateChart
+		var updateChart1 = function (upd1, count) {
+			count = count || 1;
+			for (var j = 0; j < count; j++) {
+				dps1.push({
+					x: upd1.time,
+					y: parseFloat(upd1.value)
+
+				});
 			}
 			updateAxisRange1();
-			if(resetFlag1) {
-            	chart1.options.axisX.viewportMinimum = null;
+			if (resetFlag1) {
+				chart1.options.axisX.viewportMinimum = null;
 				chart1.options.axisX.viewportMaximum = null;
 				chart1.options.axisY.viewportMinimum = null;
 				chart1.options.axisY.viewportMaximum = null;
@@ -284,212 +172,212 @@ input:checked + .slider:before {
 			chart1.render();
 		};
 
-        //define updateAxisRange: function to update the axis X range on zooming
-		var updateAxisRange1 = function (){    	   	
+		//define updateAxisRange: function to update the axis X range on zooming
+		var updateAxisRange1 = function () {
 			axisXMax1 += 1;
 			axisXMin1 += 1;
 			chart1.options.axisX.viewportMaximum = axisXMax1;
 			chart1.options.axisX.viewportMinimum = axisXMin1;
-			chart1.render();		
-        };
-        //Function for zooming out
-		function zoomout1(){
-			axisXMax1 +=1;
-			axisXMin1-=5;
+			chart1.render();
+		};
+		//Function for zooming out
+		function zoomout1() {
+			axisXMax1 += 1;
+			axisXMin1 -= 5;
 			axisYMax1 += 0.5;
 			axisYMin1 -= 0.5;
 			chart1.options.axisX.viewportMaximum = axisXMax1;
 			chart1.options.axisX.viewportMinimum = axisXMin1;
 			chart1.options.axisY.viewportMaximum = axisYMax1;
 			chart1.options.axisY.viewportMinimum = axisYMin1;
-			
+
 			chart1.render();
 		}
 		//Function for zooming in
-		function zoomin1(){
-			axisXMax1 -=1;
-			axisXMin1 +=5;
+		function zoomin1() {
+			axisXMax1 -= 1;
+			axisXMin1 += 5;
 			axisYMax1 -= 0.5;
 			axisYMin1 += 0.5;
 			chart1.options.axisX.viewportMaximum = axisXMax1;
 			chart1.options.axisX.viewportMinimum = axisXMin1;
 			chart1.options.axisY.viewportMaximum = axisYMax1;
 			chart1.options.axisY.viewportMinimum = axisYMin1;
-			
+
 			chart1.render();
-        }
-        
-        //chart2_Fingertip Temperature
-        //variables
-        var axisX2={},axisY2={};
-        var xVal=0, yVal=0, axisXMax2=0,axisXMin2=0,axisYMax2=0,axisYMin2=0;
-        var updateRange2=0;
-        var resetFlag2=false;
-        var button3 = document.getElementById( "zi2" );
-		button3.addEventListener( "click",  zoomin2);
-		var button4 = document.getElementById( "zo2" );
-		button4.addEventListener( "click",  zoomout2);
-        //define chartOptions for pressure
-		var chartOptions2 ={
+		}
+
+		//chart2_Fingertip Temperature
+		//variables
+		var axisX2 = {}, axisY2 = {};
+		var xVal = 0, yVal = 0, axisXMax2 = 0, axisXMin2 = 0, axisYMax2 = 0, axisYMin2 = 0;
+		var updateRange2 = 0;
+		var resetFlag2 = false;
+		var button3 = document.getElementById("zi2");
+		button3.addEventListener("click", zoomin2);
+		var button4 = document.getElementById("zo2");
+		button4.addEventListener("click", zoomout2);
+		//define chartOptions for pressure
+		var chartOptions2 = {
 			zoomEnabled: true,
 			exportEnabled: true,
 			zoomType: "xy",
-			rangeChanged: function(e2){
-				if(e2.trigger === "zoom"){
+			rangeChanged: function (e2) {
+				if (e2.trigger === "zoom") {
 					axisXMax2 = e2.axisX[0].viewportMaximum + 1;
 					axisXMin2 = e2.axisX[0].viewportMinimum + 1;
 					axisYMax2 = e2.axisY[0].viewportMaximum + 1;
 					axisYMin2 = e2.axisY[0].viewportMinimum + 1;
 					resetFlag2 = false;
-					if (updateRange2>0) clearInterval(updateRange2);
-					updateRange2 = setInterval(function() {
+					if (updateRange2 > 0) clearInterval(updateRange2);
+					updateRange2 = setInterval(function () {
 						updateAxisRange2();//defined below
 					}, updateInterval);
-                } 
-                else if  (e2.trigger == "reset"){
-					resetFlag2=true;
+				}
+				else if (e2.trigger == "reset") {
+					resetFlag2 = true;
 					clearInterval(updateRange2);
-				}				
-            },
+				}
+			},
 			axisX: {
-                axisX2,
-                stripLines: [
-			    {
-                    startValue: 100,
-                    endValue: 250,
-                    color:"#d8d8d8"
-                }
-                ]
-            },
+				axisX2,
+				stripLines: [
+					{
+						startValue: 100,
+						endValue: 250,
+						color: "#d8d8d8"
+					}
+				]
+			},
 			axisY: axisY2,
 			data: [
 				{
-					type:"line",
+					type: "line",
 					dataPoints: dps2,
 				},
 			],
 		};
-        //create chart
-		var chart2=new CanvasJS.Chart("chartContainer2",chartOptions2);
-		chart2.render();      
-		             
-        //define updateChart
-        var updateChart2 = function (upd2, count) {
-            count = count || 1;
-            for (var j = 0; j < count; j++) {
-                dps2.push({
-                     x: upd2.time,
-                     y: parseFloat(upd2.value)
-                });
-            }
-			if(resetFlag2) {
-            	chart2.options.axisX.viewportMinimum = null;
+		//create chart
+		var chart2 = new CanvasJS.Chart("chartContainer2", chartOptions2);
+		chart2.render();
+
+		//define updateChart
+		var updateChart2 = function (upd2, count) {
+			count = count || 1;
+			for (var j = 0; j < count; j++) {
+				dps2.push({
+					x: upd2.time,
+					y: parseFloat(upd2.value)
+				});
+			}
+			if (resetFlag2) {
+				chart2.options.axisX.viewportMinimum = null;
 				chart2.options.axisX.viewportMaximum = null;
 				chart2.options.axisY.viewportMinimum = null;
 				chart2.options.axisY.viewportMaximum = null;
 			}
 			chart2.render();
 		};
-        //define updateAxisRange: function to update the axis X range on zooming
-		var updateAxisRange2 = function (){    	   	
+		//define updateAxisRange: function to update the axis X range on zooming
+		var updateAxisRange2 = function () {
 			axisXMax2 += 1;
 			axisXMin2 += 1;
 			chart2.options.axisX.viewportMaximum = axisXMax2;
 			chart2.options.axisX.viewportMinimum = axisXMin2;
-			chart2.render();		
-        };
-        //Function for back button
-		function zoomout2(){
-			axisXMax2 +=1;
-			axisXMin2-=5;
+			chart2.render();
+		};
+		//Function for back button
+		function zoomout2() {
+			axisXMax2 += 1;
+			axisXMin2 -= 5;
 			axisYMax2 += 0.5;
 			axisYMin2 -= 0.5;
 			chart2.options.axisX.viewportMaximum = axisXMax2;
 			chart2.options.axisX.viewportMinimum = axisXMin2;
 			chart2.options.axisY.viewportMaximum = axisYMax2;
 			chart2.options.axisY.viewportMinimum = axisYMin2;
-			
+
 			chart2.render();
 		}
 		//Function for back button
-		function zoomin2(){
-			axisXMax2 -=1;
-			axisXMin2 +=5;
+		function zoomin2() {
+			axisXMax2 -= 1;
+			axisXMin2 += 5;
 			axisYMax2 -= 0.5;
 			axisYMin2 += 0.5;
 			chart2.options.axisX.viewportMaximum = axisXMax2;
 			chart2.options.axisX.viewportMinimum = axisXMin2;
 			chart2.options.axisY.viewportMaximum = axisYMax2;
 			chart2.options.axisY.viewportMinimum = axisYMin2;
-			
+
 			chart2.render();
 		}
 
-        //chart3_SPO2
-        //variables
-        var axisX3={},axisY3={};
-        var xVal=0, yVal=0, axisXMax3=0,axisXMin3=0,axisYMax3=0,axisYMin3=0;
-        var updateRange3=0;
-        var resetFlag3=false;
-        var button5 = document.getElementById( "zi3" );
-		button5.addEventListener( "click",  zoomin3);
-		var button6 = document.getElementById( "zo3" );
-		button6.addEventListener( "click",  zoomout3);
-        //define chartOptions for spo2
-		var chartOptions3 ={
+		//chart3_SPO2
+		//variables
+		var axisX3 = {}, axisY3 = {};
+		var xVal = 0, yVal = 0, axisXMax3 = 0, axisXMin3 = 0, axisYMax3 = 0, axisYMin3 = 0;
+		var updateRange3 = 0;
+		var resetFlag3 = false;
+		var button5 = document.getElementById("zi3");
+		button5.addEventListener("click", zoomin3);
+		var button6 = document.getElementById("zo3");
+		button6.addEventListener("click", zoomout3);
+		//define chartOptions for spo2
+		var chartOptions3 = {
 			zoomEnabled: true,
 			exportEnabled: true,
 			zoomType: "xy",
-			rangeChanged: function(e3){
-				if(e3.trigger === "zoom"){
+			rangeChanged: function (e3) {
+				if (e3.trigger === "zoom") {
 					axisXMax3 = e3.axisX[0].viewportMaximum + 1;
 					axisXMin3 = e3.axisX[0].viewportMinimum + 1;
 					axisYMax3 = e3.axisY[0].viewportMaximum + 1;
 					axisYMin3 = e3.axisY[0].viewportMinimum + 1;
 					resetFlag3 = false;
-					if (updateRange3>0) clearInterval(updateRange3);
-					updateRange3 = setInterval(function() {
+					if (updateRange3 > 0) clearInterval(updateRange3);
+					updateRange3 = setInterval(function () {
 						updateAxisRange3();//defined below
 					}, updateInterval);
-                } 
-                else if  (e3.trigger == "reset"){
-					resetFlag3=true;
+				}
+				else if (e3.trigger == "reset") {
+					resetFlag3 = true;
 					clearInterval(updateRange3);
-				}				
-            },
+				}
+			},
 			axisX: {
-                axisX3,
-                stripLines: [
-			    {
-                    startValue: 100,
-                    endValue: 250,
-                    color:"#d8d8d8"
-                }
-                ]
-            },
+				axisX3,
+				stripLines: [
+					{
+						startValue: 100,
+						endValue: 250,
+						color: "#d8d8d8"
+					}
+				]
+			},
 			axisY: axisY3,
 			data: [
 				{
-					type:"line",
+					type: "line",
 					dataPoints: dps3,
 				},
 			],
 		};
-        //create chart
-		var chart3=new CanvasJS.Chart("chartContainer3",chartOptions3);
-		chart3.render();      
-		             
-        //define updateChart
-        var updateChart3 = function (upd3, count) {
-            count = count || 1;
-            for (var j = 0; j < count; j++) {
-                dps3.push({
-                     x: upd3.time,
-                     y: parseFloat(upd3.value)
-                });
-            }
-			if(resetFlag1) {
-            	chart3.options.axisX.viewportMinimum = null;
+		//create chart
+		var chart3 = new CanvasJS.Chart("chartContainer3", chartOptions3);
+		chart3.render();
+
+		//define updateChart
+		var updateChart3 = function (upd3, count) {
+			count = count || 1;
+			for (var j = 0; j < count; j++) {
+				dps3.push({
+					x: upd3.time,
+					y: parseFloat(upd3.value)
+				});
+			}
+			if (resetFlag1) {
+				chart3.options.axisX.viewportMinimum = null;
 				chart3.options.axisX.viewportMaximum = null;
 				chart3.options.axisY.viewportMinimum = null;
 				chart3.options.axisY.viewportMaximum = null;
@@ -497,106 +385,106 @@ input:checked + .slider:before {
 			chart3.render();
 		};
 
-        //define updateAxisRange: function to update the axis X range on zooming
-		var updateAxisRange3 = function (){    	   	
+		//define updateAxisRange: function to update the axis X range on zooming
+		var updateAxisRange3 = function () {
 			axisXMax3 += 1;
 			axisXMin3 += 1;
 			chart3.options.axisX.viewportMaximum = axisXMax3;
 			chart3.options.axisX.viewportMinimum = axisXMin3;
-			chart3.render();		
-        };
-        //Function for back button
-		function zoomout3(){
-			axisXMax3 +=1;
-			axisXMin3-=5;
+			chart3.render();
+		};
+		//Function for back button
+		function zoomout3() {
+			axisXMax3 += 1;
+			axisXMin3 -= 5;
 			axisYMax3 += 0.5;
 			axisYMin3 -= 0.5;
 			chart3.options.axisX.viewportMaximum = axisXMax3;
 			chart3.options.axisX.viewportMinimum = axisXMin3;
 			chart3.options.axisY.viewportMaximum = axisYMax3;
 			chart3.options.axisY.viewportMinimum = axisYMin3;
-			
+
 			chart3.render();
 		}
 		//Function for back button
-		function zoomin3(){
-			axisXMax3 -=1;
-			axisXMin3 +=5;
+		function zoomin3() {
+			axisXMax3 -= 1;
+			axisXMin3 += 5;
 			axisYMax3 -= 0.5;
 			axisYMin3 += 0.5;
 			chart3.options.axisX.viewportMaximum = axisXMax3;
 			chart3.options.axisX.viewportMinimum = axisXMin3;
 			chart3.options.axisY.viewportMaximum = axisYMax3;
 			chart3.options.axisY.viewportMinimum = axisYMin3;
-			
-			chart3.render();
-        }
 
-        //chart4_Bioimpedance
-        //variables
-        var axisX4={},axisY4={};
-        var xVal=0, yVal=0, axisXMax4=0,axisXMin4=0,axisYMax4=0,axisYMin4=0;
-        var updateRange4=0;
-        var resetFlag4=false;
-        var button7 = document.getElementById( "zi4" );
-		button7.addEventListener( "click",  zoomin4);
-		var button8 = document.getElementById( "zo4" );
-		button8.addEventListener( "click",  zoomout4);
-        //define chartOptions for pressure
-		var chartOptions4 ={
+			chart3.render();
+		}
+
+		//chart4_Bioimpedance
+		//variables
+		var axisX4 = {}, axisY4 = {};
+		var xVal = 0, yVal = 0, axisXMax4 = 0, axisXMin4 = 0, axisYMax4 = 0, axisYMin4 = 0;
+		var updateRange4 = 0;
+		var resetFlag4 = false;
+		var button7 = document.getElementById("zi4");
+		button7.addEventListener("click", zoomin4);
+		var button8 = document.getElementById("zo4");
+		button8.addEventListener("click", zoomout4);
+		//define chartOptions for pressure
+		var chartOptions4 = {
 			zoomEnabled: true,
 			exportEnabled: true,
 			zoomType: "xy",
-			rangeChanged: function(e4){
-				if(e4.trigger === "zoom"){
+			rangeChanged: function (e4) {
+				if (e4.trigger === "zoom") {
 					axisXMax4 = e4.axisX[0].viewportMaximum + 1;
 					axisXMin4 = e4.axisX[0].viewportMinimum + 1;
 					axisYMax4 = e4.axisY[0].viewportMaximum + 1;
 					axisYMin4 = e4.axisY[0].viewportMinimum + 1;
 					resetFlag4 = false;
-					if (updateRange4>0) clearInterval(updateRange4);
-					updateRange4 = setInterval(function() {
+					if (updateRange4 > 0) clearInterval(updateRange4);
+					updateRange4 = setInterval(function () {
 						updateAxisRange4();//defined below
 					}, updateInterval);
-                } 
-                else if  (e4.trigger == "reset"){
-					resetFlag4=true;
+				}
+				else if (e4.trigger == "reset") {
+					resetFlag4 = true;
 					clearInterval(updateRange4);
-				}				
-            },
+				}
+			},
 			axisX: {
-                axisX4,
-                stripLines: [
-			    {
-                    startValue: 100,
-                    endValue: 250,
-                    color:"#d8d8d8"
-                }
-                ]
-            },
+				axisX4,
+				stripLines: [
+					{
+						startValue: 100,
+						endValue: 250,
+						color: "#d8d8d8"
+					}
+				]
+			},
 			axisY: axisY4,
 			data: [
 				{
-					type:"line",
+					type: "line",
 					dataPoints: dps4,
 				},
 			],
 		};
-        //create chart
-		var chart4=new CanvasJS.Chart("chartContainer4",chartOptions4);
-		chart4.render();      
-		             
-        //define updateChart
-        var updateChart4 = function (upd4, count) {
-            count = count || 1;
-            for (var j = 0; j < count; j++) {
-                dps4.push({
-                     x: upd4.time,
-                     y: parseFloat(upd4.value)
-                });
-            }
-			if(resetFlag4) {
-            	chart4.options.axisX.viewportMinimum = null;
+		//create chart
+		var chart4 = new CanvasJS.Chart("chartContainer4", chartOptions4);
+		chart4.render();
+
+		//define updateChart
+		var updateChart4 = function (upd4, count) {
+			count = count || 1;
+			for (var j = 0; j < count; j++) {
+				dps4.push({
+					x: upd4.time,
+					y: parseFloat(upd4.value)
+				});
+			}
+			if (resetFlag4) {
+				chart4.options.axisX.viewportMinimum = null;
 				chart4.options.axisX.viewportMaximum = null;
 				chart4.options.axisY.viewportMinimum = null;
 				chart4.options.axisY.viewportMaximum = null;
@@ -604,68 +492,69 @@ input:checked + .slider:before {
 			chart4.render();
 		};
 
-        //define updateAxisRange: function to update the axis X range on zooming
-		var updateAxisRange4 = function (){    	   	
+		//define updateAxisRange: function to update the axis X range on zooming
+		var updateAxisRange4 = function () {
 			axisXMax4 += 1;
 			axisXMin4 += 1;
 			chart4.options.axisX.viewportMaximum = axisXMax4;
 			chart4.options.axisX.viewportMinimum = axisXMin4;
-			chart4.render();		
-        };
-        //Function for back button
-		function zoomout4(){
-			axisXMax4 +=1;
-			axisXMin4-=5;
+			chart4.render();
+		};
+		//Function for back button
+		function zoomout4() {
+			axisXMax4 += 1;
+			axisXMin4 -= 5;
 			axisYMax4 += 0.5;
 			axisYMin4 -= 0.5;
 			chart4.options.axisX.viewportMaximum = axisXMax4;
 			chart4.options.axisX.viewportMinimum = axisXMin4;
 			chart4.options.axisY.viewportMaximum = axisYMax4;
 			chart4.options.axisY.viewportMinimum = axisYMin4;
-			
+
 			chart4.render();
 		}
 		//Function for back button
-		function zoomin4(){
-			axisXMax4 -=1;
-			axisXMin4 +=5;
+		function zoomin4() {
+			axisXMax4 -= 1;
+			axisXMin4 += 5;
 			axisYMax4 -= 0.5;
 			axisYMin4 += 0.5;
 			chart4.options.axisX.viewportMaximum = axisXMax4;
 			chart4.options.axisX.viewportMinimum = axisXMin4;
 			chart4.options.axisY.viewportMaximum = axisYMax4;
 			chart4.options.axisY.viewportMinimum = axisYMin4;
-			
+
 			chart4.render();
 		}
 
-       
-        // obtaining data from socket io to plot the data
-		socket.on("server",(message)=>{
+
+		// obtaining data from socket io to plot the data
+		socket.on("server", (message) => {
 			console.log(message);
-			
-			cnt=cnt+1;
+
+			cnt = cnt + 1;
 			for (var key of Object.keys(message.updatedFields)) {
-				if (key.substring(0, 4) == "Pres"){
+				if (key.substring(0, 4) == "Pres") {
 					var upd1 = {
-					time: cnt, // for time stamps switch to [[message.updatedFields[key].time_stamp]],
-					//console.log(x);
-					value: message.updatedFields[key].value
-                };
-                updateChart1(upd1)
-                }
-                else if(key.substring(0,4)=="Temp"){
+						time: cnt, // for time stamps switch to [[message.updatedFields[key].time_stamp]],
+						//console.log(x);
+						value: message.updatedFields[key].value
+					};
+					updateChart1(upd1)
+				}
+				else if (key.substring(0, 4) == "Temp") {
 					var upd2 = {
-					time: cnt, // for time stamps switch to [[message.updatedFields[key].time_stamp]],
-					//console.log(x);
-					value: message.updatedFields[key].value
-					
-                };
-                updateChart2(upd2)
-                }
-                
+						time: cnt, // for time stamps switch to [[message.updatedFields[key].time_stamp]],
+						//console.log(x);
+						value: message.updatedFields[key].value
+
+					};
+					updateChart2(upd2)
+				}
+
 			}
-        });
-    </script>   
+		});
+	</script>
 </body>
+
 </html>
